@@ -1,4 +1,4 @@
-# Required to assign User as a task
+# Required to assign customers after a purchase
 from django.contrib.auth.models import User
 from datetime import date
 import uuid  # Required for unique product instances
@@ -22,9 +22,9 @@ class Category(models.Model):
 
 
 class CountryOfOrigin(models.Model):
-    """Model representing a country of the product origin (China, Canada, USA, Mexico, Haiti)"""
+    """Model representing a CountryOfOrigin (China, Canada, USA, Mexico, Haiti)"""
     name = models.CharField(max_length=200,
-                            help_text="Enter the product's origin (China, Canada, USA, Mexico, Haiti)")
+                            help_text="Enter the product's category (China, Canada, USA, Mexico, Haiti)")
 
     def __str__(self):
         """String for representing the Model object (in Admin site etc.)"""
@@ -32,39 +32,39 @@ class CountryOfOrigin(models.Model):
 
 
 class Product(models.Model):
-    """Model representing a product (itemName, category, etc)."""
+    """Model representing a product (but not a specific copy of a product)."""
     itemName = models.CharField(max_length=200)
-    category = models.CharField(max_length=30)
     expiry = models.CharField(max_length=30)
     quantity = models.FloatField()
+    unit_cost = models.FloatField()
     prize = models.CharField(max_length=30)
-    notes = models.CharField(max_length=30)
+    note = models.CharField(max_length=30)
     addDate = models.DateField()
     supplier = models.ForeignKey(
         'Supplier', on_delete=models.SET_NULL, null=True)
-    # Foreign Key used because product can only have one supplier, but suppliers can have multiple products
-    # Supplier as a string rather than object because it hasn't been declared yet in file.
+    # Foreign Key used because a product can be bought from one supplier only, but suppliers can have multiple products
+
     summary = models.TextField(
         max_length=1000, help_text="Enter a brief description of the product")
-    isbn = models.CharField('SKU', max_length=13,
-                            unique=True,
-                            help_text='13 Character <a href="https://www.shopify.ca/encyclopedia/stock-keeping-unit-sku'
-                                      '">SKU number</a>')
+    sku = models.CharField('SKU', max_length=13,
+                           unique=True,
+                           help_text='13 Character<a href="https://www.shopify.ca/encyclopedia/stock-keeping-unit-sku">SKU number</a>')
     category = models.ManyToManyField(
         Category, help_text="Select a category for this product")
     # ManyToManyField used because a category can contain many products and a Product can cover many categories.
     # Category class has already been defined so we can specify the object above.
-    countryOfOrigin = models.ForeignKey(
+    countryoforigin = models.ForeignKey(
         'CountryOfOrigin', on_delete=models.SET_NULL, null=True)
 
     class Meta:
+        # to sort by itemName, then by supplier
         ordering = ['itemName', 'supplier']
 
     def display_category(self):
-        """Creates a string for the Category. This is required to display category in Admin panel."""
+        """Creates a string for the Category. This is required to display category in Admin."""
         return ', '.join([category.name for category in self.category.all()[:3]])
 
-    display_category.short_description = 'category'
+    display_category.short_description = 'Category'
 
     def get_absolute_url(self):
         """Returns the url to access a particular product instance."""
@@ -75,10 +75,10 @@ class Product(models.Model):
         return self.itemName
 
 
-class State(models.Model):
-    """Model representing the sate of a product (i.e. that can be bought from the company)."""
+class ProductInstance(models.Model):
+    """Model representing a specific product loan within the business)."""
     id = models.UUIDField(primary_key=True, default=uuid.uuid4,
-                          help_text="Unique ID for this particular product across whole company")
+                          help_text="Unique ID for this particular product across whole organization")
     product = models.ForeignKey(
         'Product', on_delete=models.RESTRICT, null=True)
     imprint = models.CharField(max_length=200)
@@ -93,7 +93,7 @@ class State(models.Model):
         return False
 
     LOAN_STATUS = (
-        ('d', 'On Sale'),
+        ('d', 'WIP'),
         ('o', 'On loan'),
         ('a', 'Available'),
         ('r', 'Reserved'),
@@ -108,7 +108,8 @@ class State(models.Model):
 
     class Meta:
         ordering = ['due_back']
-        permissions = (("can_mark_returned", "Set product as returned"),)
+        permissions = (
+            ("can_mark_returned", "Set product as damaged"),)
 
     def __str__(self):
         """String for representing the Model object."""
@@ -116,11 +117,10 @@ class State(models.Model):
 
 
 class Supplier(models.Model):
-    """Model representing a supplier."""
+    """Model representing an supplier."""
     name = models.CharField(max_length=100)
     business_type = models.CharField(max_length=100)
-    date_start = models.DateField(null=True, blank=True)
-    date_end = models.DateField('out of business', null=True, blank=True)
+    start_date = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ['name', 'business_type']

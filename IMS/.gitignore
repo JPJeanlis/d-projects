@@ -10,3 +10,5 @@ media
 Include/
 Lib/
 Scripts/
+pyvenv.cfg
+
