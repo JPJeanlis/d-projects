@@ -81,20 +81,28 @@ class ProductInstance(models.Model):
                           help_text="Unique ID for this particular product across whole organization")
     product = models.ForeignKey(
         'Product', on_delete=models.RESTRICT, null=True)
-    imprint = models.CharField(max_length=200)
-    due_back = models.DateField(null=True, blank=True)
-    customer = models.ForeignKey(
+    customer_full_name = models.CharField(max_length=200)
+    address = models.CharField(max_length=200)
+    phone = models.CharField(max_length=14)
+    social_S_N = models.CharField(max_length=200)
+    driver_license = models.CharField(max_length=200)
+    comment = models.CharField(max_length=200)
+    due_payment_date = models.DateField(null=True, blank=True)
+    purchase_date = models.DateField(null=True, blank=True)
+    employee = models.ForeignKey(
         User, on_delete=models.SET_NULL, null=True, blank=True)
 
     @property
     def is_overdue(self):
-        if self.due_back and date.today() > self.due_back:
-            return True
+        if self.due_payment_date and date.today() > self.due_payment_date:
+            if self.purchase_date and date.today() > self.purchase_date:
+                return True
         return False
 
     LOAN_STATUS = (
-        ('d', 'WIP'),
-        ('o', 'On loan'),
+        ('d', 'Paid'),
+        ('o', 'Loan'),
+        ('o', 'Due'),
         ('a', 'Available'),
         ('r', 'Reserved'),
     )
@@ -107,7 +115,7 @@ class ProductInstance(models.Model):
         help_text='Product availability')
 
     class Meta:
-        ordering = ['due_back']
+        ordering = ['due_payment_date', 'purchase_date']
         permissions = (
             ("can_mark_returned", "Set product as damaged"),)
 
@@ -121,6 +129,7 @@ class Supplier(models.Model):
     name = models.CharField(max_length=100)
     business_type = models.CharField(max_length=100)
     start_date = models.DateField(null=True, blank=True)
+    end_date = models.DateField(null=True, blank=True)
 
     class Meta:
         ordering = ['name', 'business_type']
