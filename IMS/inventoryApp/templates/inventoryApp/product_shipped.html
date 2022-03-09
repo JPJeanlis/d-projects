@@ -1,0 +1,15 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>Buy: {{product_instance.product.itemName}}</h1>
+    <p>Customer: {{product_instance.customer}}</p>
+    <p{% if product_instance.is_overdue %} class="text-danger"{% endif %}>Due date: {{product_instance.due_payment_date}}</p>
+    
+    <form action="" method="post">
+        {% csrf_token %}
+        <table>
+        {{ form.as_table }}
+        </table>
+        <input type="submit" value="Submit" />
+    </form>
+{% endblock %}

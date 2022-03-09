@@ -1,0 +1,26 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Title: {{ product.itemName }}</h1>
+
+<p><strong>Supplier:</strong> <a href="{{ product.supplier.get_absolute_url }}">{{ product.supplier }}</a></p>
+<p><strong>Summary:</strong> {{ product.summary }}</p>
+<p><strong>SKU:</strong> {{ product.sku }}</p> 
+<p><strong>Country Of Origin:</strong> {{ product.countryoforigin }}</p>  
+<p><strong>Category:</strong> {{ product.category.all|join:", " }}</p>
+
+<div style="margin-left:20px;margin-top:20px">
+<h4>product Status</h4>
+
+{% for product in product.productinstance_set.all %}
+<hr>
+<p class="{% if product.status == 'a' %}text-success{% elif product.status == 'd' %}text-danger{% else %}text-warning{% endif %}">{{ product.get_status_display }}</p>
+{% if product.status != 'a' %}<p><strong>Payment Due:</strong> {{product.due_payment_date}}</p>{% endif %}
+<p><strong>Comment:</strong> {{product.comment}}</p>
+<p class="text-muted"><strong>Id:</strong> {{product.id}}</p>
+
+{% endfor %}
+</div>
+{% endblock %}
+

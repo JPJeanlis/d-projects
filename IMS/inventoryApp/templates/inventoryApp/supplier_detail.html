@@ -1,0 +1,19 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Supplier: {{ supplier }} </h1>
+<p>{{supplier.start_date}} - {% if supplier.start_date %}{{supplier.start_date}}{% endif %}</p>
+
+<div style="margin-left:20px;margin-top:20px">
+<h4>Products</h4>
+
+<dl>
+{% for product in supplier.product_set.all %}
+  <dt><a href="{% url 'product-detail' product.pk %}">{{product}}</a> ({{product.productinstance_set.all.count}})</dt>
+  <dd>{{product.summary}}</dd>
+{% endfor %}
+</dl>
+
+</div>
+{% endblock %}

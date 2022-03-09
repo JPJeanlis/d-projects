@@ -1,0 +1,20 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+    <h1>List of products for Loan</h1>
+
+    {% if productinstance_list %}
+    <ul>
+
+      {% for productinst in productinstance_list_sold_user %} 
+      <li class="{% if productinst.is_overdue %}text-danger{% endif %}">
+        <a href="{% url 'product-detail' productinst.product.pk %}">{{productinst.product.itemName}}</a> ({{ productinst.due_payement_date }})        
+      </li>
+      {% endfor %}
+    </ul>
+
+    {% else %}
+      <p>There are no products for Loan.</p>
+    {% endif %}       
+{% endblock %}
+

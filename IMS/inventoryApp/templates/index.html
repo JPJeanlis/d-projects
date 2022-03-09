@@ -1,0 +1,32 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+<h1>Inventory Management System (IMS)</h1>
+
+<p>Welcome to <em>Inventory Management System (IMS)</em>, Lorem ipsum dolor sit, amet consectetur adipisicing elit. Dolores omnis iusto <a href="https://www.djangoproject.com/">tutorial example</a> on the Mozilla Developer Network.</p>
+<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Eveniet quae quis natus at rem aut laudantium mollitia id deserunt ea reprehenderit reiciendis a debitis omnis non, culpa quas incidunt. Beatae perferendis deserunt magni dolor ipsum, repellat laborum ut fugit hic labore voluptatibus tenetur necessitatibus dicta est ipsa? Ab, saepe aliquam?.</p>
+
+
+<h2>IMS Models</h2>
+<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Suscipit facilis debitis molestias dolores laborum repudiandae ut reprehenderit cupiditate voluptate labore!. </p>
+
+<div>
+{% load static %}
+<img src="{% static "images/coffee.jpg" %}" alt="My image" style="width:555px;height:540px;"/>
+</div>  
+
+
+<h2>Dynamic content</h2>
+
+<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Cum, asperiores.:</p>
+<ul>
+<li><strong>Products:</strong> {{ num_products }}</li>
+<li><strong>Suppliers:</strong> {{ num_suppliers }}</li>
+<li><strong>Loans:</strong> {{ num_instances }}</li>
+<li><strong>Loans available:</strong> {{ num_instances_available }}</li>
+</ul>
+
+
+<p>You have visited this page {{ num_visits }} time{{ num_visits|pluralize }}.</p>
+
+{% endblock %}

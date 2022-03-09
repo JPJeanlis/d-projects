@@ -1,0 +1,26 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+
+<h1>Supplier List</h1>
+
+{% if supplier_list %}
+  <ul>
+
+  {% for supplier in supplier_list %}
+    <li>
+      <a href="{{ supplier.get_absolute_url }}">
+      {{ supplier }} ({{supplier.start_date}} - {% if supplier.start_date %}{{supplier.start_date}}{% endif %})
+      </a>
+    </li>
+  {% endfor %}
+
+ </ul>
+{% else %}
+  <p>There are no suppliers available.</p>
+{% endif %}
+        
+        
+        
+{% endblock %}
+
